@@ -1,62 +1,128 @@
-import React from 'react'
-import Pickup from '../Icons/Pickup.svg'
-import Dropoff from '../Icons/Dropoff.svg'
-import Pays from '../Icons/Pays.svg'
+import React, { Component } from 'react'
+import IndividualJob from './IndividualJob.js'
+import UserStore from '../Stores/UserStore.js'
 
-export default function Jobs() {
+export class Jobs extends Component {
 
-  return (
-    <div className='JobScreen'>
-      <div className='JobCard'>
+  state = {
+    jobs: [],
+    isLoaded: false
+  }
 
-        <h1>Job</h1>
+  async getJobs() {
+    try {
 
-        <div className='JobDetails'>
-          <table>
-            <tbody>
-            <tr>
-              <td rowSpan='2'><img src={Pickup} alt='Pickup' className='JobIcons'/></td>
-              <td><span className='JobDetailsGrey'>Pickup from </span>2/125 Oxlade Dr</td>
-            </tr>
-            <tr>
-              <td>New Farm QLD 4005</td>
-            </tr>
-            </tbody>
-          </table>
+      if (!UserStore.isLoggedIn) {
+        console.log('User is not logged in');
+        return false;
+      }
+
+      this.setState({ isLoaded: false})
+      await new Promise(r => setTimeout(r, 1000));
+
+      let res = await fetch('/jobs', {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      let result = await res.json();
+      if (result.length > 0) {
+        this.setState({ 
+          jobs: result,
+          isLoaded: true
+        });
+      }
+      else if (result && result.success === false) {
+        this.setState({
+          jobs: [],
+          isLoaded: true
+        })
+
+      }
+
+    }
+
+    catch(e) {
+      console.log(e);
+    }
+  }
+
+  async componentDidMount() {
+    this.getJobs();
+  }
+
+  acceptJob = (id) => {
+    
+    try {
+
+      fetch('/accept', {
+        method: 'put',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: id
+        })
+      })
+      .then(res => res.json())
+      .then((result) => {
+        if (result && result.success) {
+          this.getJobs().then(this.setState({ isLoaded: true}));
+        }
+        else if(result && result.success === false) {
+          alert(result.msg);
+        }
+      })
+
+    }
+
+    catch(e) {
+      console.log(e);
+    }
+
+  }
+
+  renderJobs() {
+    return this.state.jobs.map((job) => {
+      return (
+        <IndividualJob 
+        key={job.id} 
+        id={job.id}
+        pickupAdd1={job.pickupAdd1}
+        pickupAdd2={job.pickupAdd2}
+        dropoffAdd1={job.dropoffAdd1}
+        dropoffAdd2={job.dropoffAdd2}
+        pays={job.pays}
+        acceptJob={this.acceptJob}
+        />
+      )
+    });
+  }
+
+  render() {
+    if (!this.state.isLoaded) {
+      return <div className='JobScreen'>Loading Available Jobs...</div>
+    }
+
+    else if (this.state.isLoaded && this.state.jobs.length < 1) {
+      return <div className='JobScreen'>No available jobs, check back later</div>
+    }
+
+    else {
+      return (
+        <div className='JobScreen'>
+
+          {this.renderJobs()}
+
         </div>
-
-        <div className='JobDetails'>
-          <table>
-            <tbody>
-            <tr>
-              <td rowSpan='2'><img src={Dropoff} alt='Dropoff' className='JobIcons'/></td>
-              <td><span className='JobDetailsGrey'>Drop-off at </span>33-7 Townley St</td>
-            </tr>
-            <tr>
-              <td>St Lucia QLD 4067</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className='JobDetails'>
-          <table>
-            <tbody>
-            <tr>
-              <td><img src={Pays} alt='$' className='JobIcons' style={{padding: '0 12px 0 6px'}}/></td>
-              <td><span className='JobDetailsGrey'>Pays </span>$12.50</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
-      <div className='AcceptCard'>
-        <button className='AcceptButton'>ACCEPT</button>
-      </div>
-
-    </div>
-
-  )
+    
+      )
+    }
+   
+  }
+  
 }
+
+export default Jobs

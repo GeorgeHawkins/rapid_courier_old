@@ -114,7 +114,8 @@ h1 {
   text-align: left;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-style: solid hidden hidden hidden;
-  padding: 15px 10px;
+  padding: 15px 20px;
+  margin-bottom: 15px;
 }
 
 .AcceptButton {
@@ -135,19 +136,8 @@ h1 {
 }
 
 @media (min-width: 800px) { 
-  .SignInButton {
-    width: 70%;
-  }
 
-  .InputField {
-    width: 70%;
-  }
-
-  .HeaderBar {
-    width: 70%
-  }
-
-  .JobScreen {
+  .SignInButton, .InputField, .HeaderBar, .JobScreen {
     width: 70%;
   }
 

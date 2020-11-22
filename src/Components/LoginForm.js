@@ -1,14 +1,61 @@
 import React, { Component } from 'react'
+import SubmitButton from './SubmitButton.js'
+import UserStore from '../Stores/UserStore.js'
 
 export class LoginForm extends Component {
 
   state = {
-    user: '',
-    pass: '',
+    username: '',
+    password: ''
   }
+
 
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value})
+  }
+
+  resetForm() {
+    this.setState({
+      username: '',
+      password: '',
+    })
+  }
+
+  async doLogin() {
+    if (!this.state.username || !this.state.password) {
+      return;
+    }
+
+    try {
+
+      let res = await fetch('/login', {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: this.state.username,
+          password: this.state.password
+        })
+      });
+
+      let result = await res.json();
+      if (result && result.success) {
+        UserStore.isLoggedIn = true;
+      }
+      else if (result && result.success === false) {
+        this.resetForm();
+        alert(result.msg);
+      }
+
+    }
+
+    catch(e) {
+      console.log(e);
+      this.resetForm();
+    }
+
   }
 
   render() {
@@ -18,23 +65,27 @@ export class LoginForm extends Component {
         <input 
         type='text' 
         placeholder='Username'
-        value={this.state.user}
-        name='user' 
+        value={this.state.username}
+        name='username' 
         className='InputField'
         autoComplete='off'
-        onChange={this.onChange}/>
+        onChange={this.onChange}
+        />
 
         <input type='password' 
         placeholder='Password' 
-        value={this.state.pass}
-        name='pass' 
+        value={this.state.password}
+        name='password' 
         className='InputField' 
-        onChange={this.onChange}/>
+        onChange={this.onChange}
+        />
 
-        <button 
-        type='submit' 
-        disabled={(this.state.user.length < 1 || this.state.pass.length < 1)} 
-        className='SignInButton'>SIGN IN</button>
+        <SubmitButton 
+        text='SIGN IN'
+        disabled={this.state.username < 1 || this.state.password < 1}
+        className='SignInButton'
+        onClick={ () => this.doLogin() }
+        />
         
       </form>
     )
