@@ -133,6 +133,12 @@ h1 {
 
 .AcceptButton:hover {
   cursor: pointer;
+  transform: translateY(-0.1em);
+  
+}
+
+.AcceptButton:focus {
+  cursor: progress;
 }
 
 @media (min-width: 800px) { 
