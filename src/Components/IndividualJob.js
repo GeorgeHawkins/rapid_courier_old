@@ -67,14 +67,8 @@ export class IndividualJob extends Component {
           </div>
 
           <div className='AcceptCard'>
-          {/* <button 
-            type='button'
-            className='AcceptButton'
-            onClick={this.acceptJob}>
-            Accept
-          </button> */}
           <SubmitButton 
-            text='Accept'
+            text='ACCEPT'
             disabled={false}
             className='AcceptButton'
             onClick={this.acceptJob}

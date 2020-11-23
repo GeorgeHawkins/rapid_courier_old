@@ -11,7 +11,9 @@ export class LoginForm extends Component {
 
 
   onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value})
+    let val = e.target.value;
+    if (val.length > 12) return;
+    this.setState({ [e.target.name]: val})
   }
 
   resetForm() {
