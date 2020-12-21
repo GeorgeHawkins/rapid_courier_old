@@ -6,12 +6,12 @@ export class LoginForm extends Component {
 
   state = {
     username: '',
-    password: ''
+    password: '',
   }
 
 
   onChange = (e) => {
-    let val = e.target.value;
+    const val = e.target.value;
     if (val.length > 12) return;
     this.setState({ [e.target.name]: val})
   }
@@ -23,6 +23,10 @@ export class LoginForm extends Component {
     })
   }
 
+  async doCreateAccount() {
+    console.log('account made');
+  }
+
   async doLogin() {
     if (!this.state.username || !this.state.password) {
       return;
@@ -30,7 +34,7 @@ export class LoginForm extends Component {
 
     try {
 
-      let res = await fetch('/login', {
+      const res = await fetch('/login', {
         method: 'post',
         headers: {
           'Accept': 'application/json',
@@ -42,7 +46,7 @@ export class LoginForm extends Component {
         })
       });
 
-      let result = await res.json();
+      const result = await res.json();
       if (result && result.success) {
         UserStore.isLoggedIn = true;
       }
@@ -61,36 +65,71 @@ export class LoginForm extends Component {
   }
 
   render() {
-    return (
-      <form className='LoginForm'>
+      return (
+        <div>
+  
+          <form className='LoginForm'>
+  
+          <input 
+          type='text' 
+          placeholder='Username'
+          value={this.state.username}
+          name='username' 
+          className='InputField'
+          autoComplete='off'
+          onChange={this.onChange}
+          />
+  
+          <input type='password' 
+          placeholder='Password' 
+          value={this.state.password}
+          name='password' 
+          className='InputField' 
+          onChange={this.onChange}
+          />
+  
+          <SubmitButton 
+          text='SIGN IN'
+          disabled={this.state.username < 1 || this.state.password < 1}
+          className='SignInButton'
+          onClick={ () => this.doLogin() }
+          />
+  
+          </form>
 
-        <input 
-        type='text' 
-        placeholder='Username'
-        value={this.state.username}
-        name='username' 
-        className='InputField'
-        autoComplete='off'
-        onChange={this.onChange}
-        />
 
-        <input type='password' 
-        placeholder='Password' 
-        value={this.state.password}
-        name='password' 
-        className='InputField' 
-        onChange={this.onChange}
-        />
+          <div style={{width: "40%", margin: "auto", fontSize: "18px"}}>
+            Test Login Users
+          
 
-        <SubmitButton 
-        text='SIGN IN'
-        disabled={this.state.username < 1 || this.state.password < 1}
-        className='SignInButton'
-        onClick={ () => this.doLogin() }
-        />
-        
-      </form>
-    )
+          <div className='TestUsersHeader' style={{borderBottom: "1px solid #ccc"}}>
+            <div className='TestUsersText'>Username</div>
+            <div className='TestUsersText'>Password</div>
+          </div>
+
+          <div className='TestUsersHeader'>
+            <div className='TestUsersText'>test user</div>
+            <div className='TestUsersText'>12345</div>
+          </div>
+
+          <div className='TestUsersHeader'>
+            <div className='TestUsersText'>sam123</div>
+            <div className='TestUsersText'>password</div>
+          </div>
+
+          <div className='TestUsersHeader'>
+            <div className='TestUsersText'>icepack88</div>
+            <div className='TestUsersText'>sheep1</div>
+          </div>
+          
+          </div>
+
+
+
+        </div>
+
+      );
+      
   }
   
 }

@@ -20,14 +20,14 @@ export class Jobs extends Component {
       this.setState({ isLoaded: false})
       await new Promise(r => setTimeout(r, 1000));
 
-      let res = await fetch('/jobs', {
+      const res = await fetch('/jobs', {
         method: 'get',
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
-      let result = await res.json();
+      const result = await res.json();
       if (result.length > 0) {
         this.setState({ 
           jobs: result,
